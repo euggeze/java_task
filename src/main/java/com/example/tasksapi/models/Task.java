@@ -1,6 +1,7 @@
 package com.example.tasksapi.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class Task {
     private String description;
 
     @Column(name="created_on", nullable = false, updatable = false)
-    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime created_on;
 
     public Task(){
