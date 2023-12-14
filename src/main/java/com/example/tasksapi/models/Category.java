@@ -29,4 +29,11 @@ public class Category {
 
     @ManyToMany(mappedBy = "categories")
     private Set<Task> tasks;
+
+    public Category(){
+
+    }
+    public Category(String name){
+        this.name = name;
+    }
 }

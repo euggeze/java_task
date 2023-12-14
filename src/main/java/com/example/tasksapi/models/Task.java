@@ -62,7 +62,20 @@ public class Task {
     )
     private Set<Category> categories;
 
+    public Set<Category> getCategories(){
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories){
+        this.categories = categories;
+    }
+
     @OneToMany
     @JoinColumn(name = "task_id")
     private Set<Image> images;
+
+    public Set<Image> getImages(){
+        return images;
+    }
+
 }
