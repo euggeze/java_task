@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -26,6 +27,7 @@ public class TaskController {
                                   @RequestParam(name = "title", required = false, defaultValue = "") String title,
                                   @RequestParam(name = "description", required = false, defaultValue = "") String description
                                   ) {
+        /* A method for retrieving all data with the ability to sort or filter.*/
         List<Task> tasks;
 
         if (!Objects.equals(title, "") || !Objects.equals(description, "")){
@@ -46,33 +48,55 @@ public class TaskController {
 
     @GetMapping("/tasks/{id}/")
     public Optional<Task> getById(@PathVariable Long id) {
+        /* A method for retrieving data by ID.*/
         return taskRepository.findById(id);
     }
 
-    @PostMapping("/tasks/")
-    public Task createTask(@RequestParam(name = "title", required = false) String title,
-                           @RequestParam(name = "description", required = false) String description,
-                           @RequestParam(name = "category", required = false) List<String> categories) {
-        Task new_task = new Task(title, description);
-        Set<Category> categorySet = new HashSet<>();
-        for (String category:categories
-             ) {
-            categorySet.add(categoryRepository.getOrCreate(category));
-        }
+    @PostMapping(value = "/tasks/", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createTask(@RequestParam(name = "title") String title,
+                           @RequestParam(name = "description") String description,
+                           @RequestParam(name = "category") List<String> categories,
+                           @RequestParam(value = "file", required = false) MultipartFile file) {
+        /* A method for creating new tasks.*/
+        try{
+            Task new_task = new Task(title, description);
+            Set<Category> categorySet = new HashSet<>();
+            for (String category:categories
+                 ) {
+                categorySet.add(categoryRepository.getOrCreate(category));
+            }
 
-        new_task.setCategories(categorySet);
-        return taskRepository.save(new_task);
+            new_task.setCategories(categorySet);
+        }
+        catch (Exception ex){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error with data");
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
     }
 
     @DeleteMapping("/tasks/{id}")
-    public void deleteById(@PathVariable Long id) {
-        taskRepository.deleteById(id);
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        /* A method for deleting a task by ID.*/
+        Optional<Task> taskQuery = taskRepository.findById(id);
+
+        if (taskQuery.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id not found");
+        }
+
+        try {
+            taskRepository.deleteById(id);
+        }
+        catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
     }
 
     @PatchMapping("/tasks/{id}")
     public ResponseEntity<String> updateById(@PathVariable Long id,
                                              @RequestParam(name="title", required = false) String title,
                                              @RequestParam(name="description", required = false) String description) {
+        /* A method for changing a task by ID.*/
         Optional<Task> taskQuery = taskRepository.findById(id);
 
         if (taskQuery.isEmpty()){
