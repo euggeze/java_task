@@ -5,6 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,6 +34,8 @@ public class Task {
     public Task(String title, String description){
         this.title = title;
         this.description = description;
+        this.images = new HashSet<>();
+        this.categories = new HashSet<>();
     }
 
     public long getId() {
@@ -67,7 +71,7 @@ public class Task {
     }
 
     public void setCategories(Set<Category> categories){
-        this.categories = categories;
+        this.categories.addAll(categories);
     }
 
     @OneToMany
@@ -78,4 +82,7 @@ public class Task {
         return images;
     }
 
+    public void setImages(List<Image> images) {
+        this.images.addAll(images);
+    }
 }

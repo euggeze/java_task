@@ -135,7 +135,7 @@ class TasksApiApplicationTests {
     @Test
     void updateOneField(){
         String old_title = tasks.get(0).getTitle();
-        taskController.updateById(tasks.get(0).getId(),"new_title", null);
+        taskController.updateById(tasks.get(0).getId(),"new_title", null, null,null);
 
         assertNotEquals(old_title, taskRepository.findById(tasks.get(0).getId()).get().getTitle());
     }
@@ -144,7 +144,7 @@ class TasksApiApplicationTests {
     void updateAllFields(){
         String old_title = tasks.get(0).getTitle();
         String old_descr = tasks.get(0).getDescription();
-        taskController.updateById(tasks.get(0).getId(),"new_b", "new_c");
+        taskController.updateById(tasks.get(0).getId(),"new_b", "new_c", null, null);
 
         assertNotEquals(old_title, taskRepository.findById(tasks.get(0).getId()).get().getTitle());
         assertNotEquals(old_descr, taskRepository.findById(tasks.get(0).getId()).get().getTitle());

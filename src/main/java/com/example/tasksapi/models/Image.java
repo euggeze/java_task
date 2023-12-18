@@ -12,6 +12,14 @@ public class Image {
     @Column(name="path", nullable = false)
     public String path;
 
+    public Image(String path){
+        this.path = path;
+    }
+
+    public Image() {
+
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
